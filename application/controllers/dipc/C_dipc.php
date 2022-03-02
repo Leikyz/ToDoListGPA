@@ -16,11 +16,11 @@ class c_dipc extends CI_Controller {
     public function __construct() {
         parent::__construct();
         //ACCES sur le niveau 
-        $acces = new Acces; 
-        if($acces->AfficheZone('niveau', '1,3,4,5,7')=='N')
-        { 
-            show_error("Le niveau d'accès requis n'est pas atteint pour afficher cette page.","1","Accès refusé");
-        }
+        //$acces = new Acces; 
+        //if($acces->AfficheZone('niveau', '1,3,4,5,7')=='N')
+        //{ 
+        //    show_error("Le niveau d'accès requis n'est pas atteint pour afficher cette page.","1","Accès refusé");
+        //}
         //formatage heure locale
         date_default_timezone_set('Europe/Paris');
         setlocale(LC_TIME, 'fr', 'fr_FR', 'fr_FR.ISO8859-1');
@@ -36,15 +36,15 @@ class c_dipc extends CI_Controller {
 
         //Contrôle l'accès par service et le niveau
         $usagerService = Get_Enfant_Champ($usagerId, 'enfant_service_id');
-        $acces = new Acces;
+        //$acces = new Acces;
         /*if( $acces->AfficheZone('service', $usagerService['enfant_service_id'] ) == 'N')
         { 
             show_error("L'autorisation d'accès aux services concernés n'est pas accordée pour afficher cette page.","1","Accès refusé");
         }*/
-        /*if($acces->AfficheZone('niveau', '1,3,5,7')=='N')
-        { 
-            show_error("Le niveau d'accès requis n'est pas atteint pour afficher cette page.","1","Accès refusé");
-        }*/
+        //if($acces->AfficheZone('niveau', '1,3,5,7')=='N')
+        //{ 
+        //    show_error("Le niveau d'accès requis n'est pas atteint pour afficher cette page.","1","Accès refusé");
+        //}
 
         $this->load->helper('form');
 
@@ -80,6 +80,11 @@ class c_dipc extends CI_Controller {
         $detailsDipc = array('dipc_date_debut'=>NULL,'dipc_date_fin'=>NULL,'dipc_type'=>NULL,'dipc_statut'=>NULL,'dipc_document'=>NULL);
         $data['detailsDipc'] = (object) $detailsDipc;
 
+
+
+
+
+        
         // On peuple la variable data pour charger les bons script/css
         $data['scripts'] = array('jquery3', 'bootstrap', 'lte', 'datepicker');
         
@@ -108,15 +113,15 @@ class c_dipc extends CI_Controller {
     public function updateDipc($usagerId,$dipcId) {
         //Contrôle l'accès par service et le niveau
         $usagerService = Get_Enfant_Champ($usagerId, 'enfant_service_id');
-        $acces = new Acces;
+        //$acces = new Acces;
         /*if( $acces->AfficheZone('service', $usagerService['enfant_service_id'] ) == 'N')
         { 
             show_error("L'autorisation d'accès aux services concernés n'est pas accordée pour afficher cette page.","1","Accès refusé");
         }*/
-       /* if($acces->AfficheZone('niveau', '1,3,5,7')=='N')
-        { 
-            show_error("Le niveau d'accès requis n'est pas atteint pour afficher cette page.","1","Accès refusé");
-        }*/
+        //if($acces->AfficheZone('niveau', '1,3,5,7')=='N')
+        //{ 
+         //   show_error("Le niveau d'accès requis n'est pas atteint pour afficher cette page.","1","Accès refusé");
+        //}
 
         $this->load->helper('form');
         $this->load->model('dipc/m_dipc');
@@ -217,7 +222,7 @@ class c_dipc extends CI_Controller {
                 );
         }else{
             $data['acces_modif'] = 'nok';
-            $dat a['boutons'] = array();
+            $data['boutons'] = array();
         }
 
         // On charge les differents modules neccessaires a l'affichage d'une page

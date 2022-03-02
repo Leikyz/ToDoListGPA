@@ -3,7 +3,7 @@
 if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 
-class todolist extends CI_Model {
+class M_todolist extends CI_Model {
     
      public function __construct() {
         parent::__construct();
@@ -20,12 +20,12 @@ class todolist extends CI_Model {
         return $result;
     }
 
-    public function listTask($usagerId) {
-        $this->db->select('tache_id, tache_creation_date, tache_echeance-date, tache_titre, tache_contenu');
+    public function listTask($intervenantId) {
+        $this->db->select('tache_id, tache_titre, tache_contenu, tache_creation_date, tache_service_id, tache_intervenant_id');
         $this->db->from('tache');
-        $this->db->where('tache_id', $usagerId);
+        $this->db->where('tache_intervenant_id', $intervenantId);
         $query = $this->db->get();
-        $result = $query->result_array();
+        $result = $query->result();
         //echo $this->db->last_query();
         return $result;
     }
