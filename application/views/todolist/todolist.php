@@ -1,7 +1,14 @@
 
     <p class="h1 fs-1 text-center">To-Do List</p>
     <br><br>
-    <table class="datatable table table-striped" style="width: 100%"">
+
+    <div class="col-md-2 col-md-offset-5 col-centered background-color #00C0EF">
+        <button type="button" class="btn btn-primary btn-lg btn-block">Créer To-Do List</button>
+        <button type="button" class="btn btn-default btn-lg btn-block">Modifier To-Do List</button>
+    </div>
+    
+
+    <table class="datatable table table-striped" style="width: 100%">
         <thead>
             <tr>
                 <th>ID</th> 
