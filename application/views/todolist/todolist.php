@@ -33,6 +33,7 @@ foreach($task as $ligne)
                 <td><?php echo Conv_Date($ligne['dateCreation'],'EN-FR');?></td>
                 <td><?php echo $ligne['intervenant'];?></td>
                 <td><?php echo $ligne['service'];?></td>
+                <td><a href="http://localhost/codeigniter/index.php/todolist/C_todolist/updateTask/<?=$ligne['id']?>" class="btn btn-info" role="button">Modifier</a></td>
             </tr>
         </tbody>
 <?php
