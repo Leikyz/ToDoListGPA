@@ -10,7 +10,16 @@ class m_services extends CI_Model {
         date_default_timezone_set('Europe/Paris');
         setlocale(LC_TIME, 'fr', 'fr_FR', 'fr_FR.ISO8859-1');
     }
+    public function getServices() {
+        //public function getServicesByIds() {
     
+            $this->db->select('*');
+            $this->db->from('service');
+            $query = $this->db->get();
+            $result = $query->result_array();
+            return $result;
+           
+        }
     public function getUserServices() {
     //public function getServicesByIds() {
 
