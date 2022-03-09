@@ -3,7 +3,7 @@
 if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 
-class M_todolist extends CI_Model {
+class m_todolist extends CI_Model {
     
      public function __construct() {
         parent::__construct();
@@ -20,10 +20,9 @@ class M_todolist extends CI_Model {
         return $result;
     }
 
-    public function listTask($intervenantId) {
+    public function listTask() {
         $this->db->select('tache_id, tache_titre, tache_contenu, tache_creation_date, tache_service_id, tache_intervenant_id');
         $this->db->from('tache');
-        $this->db->where('tache_intervenant_id', $intervenantId);
         $query = $this->db->get();
         $result = $query->result();
         //echo $this->db->last_query();
@@ -32,17 +31,10 @@ class M_todolist extends CI_Model {
 
     public function insertTask($data) {
         $data = array(
-            'tache_id' => $data['tache_id'],
-            'tache_creation_date' => Conv_Date($data['tache_creation_date'],'FR-EN'),
-            'tache_echeance-date' => Conv_Date($data['tache_echeance-date'],'FR-EN'),
-            'tache_titre' => $data['tache_titre'],
-            'tache_contenu' => $data['tache_contenu'],
+            'tache_titre' => $data['titre'],
+            'tache_contenu' => $data['description'],
         );
         $result = $this->db->insert('tache', $data);
-        if($result)
-        {
-            logs("Ajout Tache (ID ".$this->db->insert_id().")" , 'tache_id', $data['tache_id']);
-        }
         return $result;
     }
 
