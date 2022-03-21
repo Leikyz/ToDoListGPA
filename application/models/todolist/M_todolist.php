@@ -20,38 +20,91 @@ class m_todolist extends CI_Model {
         return $result;
     }
 
+    public function insertTask($data, $intervenant) {
+        $datetime = date('d-m-y h:i:s');
+        $timestamp = date('Y-m-d H:i:s',strtotime($datetime));
+        $data = array(
+            'tache_titre' => $data['titre'],
+            'tache_contenu' => $data['description'],
+            'tache_creation_intervenant_id' => 1,
+            'tache_service_id' => $data['service'],
+            'tache_echeance_date' => date('Y-m-d', strtotime(str_replace('-', '/', $data['last']))),
+            'tache_creation_date' => preg_replace('#(\d{2})/(\d{2})/(\d{4})\s(.*)#', '$3-$2-$1 $4',  $timestamp),
+            'tache_intervenant_id' => $intervenant,
+        );
+        $result = $this->db->insert('tache', $data);
+        redirect('/todolist/C_todolist');
+        return $result;
+    }
+   // Mettre en archive
+   public function putArchiveTask($id, $archive){
+    $tab = array('tache_archive' => $archive);
+
+
+    $this->db->where('tache_id', $id);
+    $result = $this->db->update('tache', $tab);
+
+    return $result;
+}
+
+// Retirer archive
+public function outArchiveTask($id, $archive){
+    $tab = array('tache_archive' => $archive);
+
+
+    $this->db->where('tache_id', $id);
+    $result = $this->db->update('tache', $tab);
+
+    return $result;
+}
+
+    public function updateTask($data, $taskid) 
+    {
+        $datetime = date('d-m-y h:i:s');
+        $timestamp = date('Y-m-d H:i:s',strtotime($datetime));
+        $datas = [];
+        if ($data['titre'] != null) 
+        {
+            $datas += array('tache_titre' => $data['titre']);
+        }
+        if ($data['description'] != null) 
+        {
+            $datas += array('tache_contenu' => $data['description']);
+        }
+        if ($data['service'] != null) 
+        {
+            $datas += array('tache_service_id' => $data['service']);
+        } 
+        if ($data['intervenant'] != null) 
+        {
+            $datas += array('tache_intervenant_id' => $data['intervenant']);
+        }   
+        if ($data['note'] != null) 
+        {
+            $datas += array('tache_commentaire' => $data['note']);
+        }            
+                
+        $this->db->where('tache_id', $taskid);
+        $result = $this->db->update('tache', $datas);
+        redirect('/todolist/C_todolist');
+        return $result;
+    }   
     public function listTask() {
-        $this->db->select('tache_id, tache_titre, tache_contenu, tache_creation_date, tache_service_id, tache_intervenant_id');
+        $this->db->select('tache_id, tache_titre, tache_contenu, tache_creation_date, tache_service_id, tache_intervenant_id, tache_archive');
         $this->db->from('tache');
+        $this->db->where('tache_archive', 0);
         $query = $this->db->get();
         $result = $query->result();
         //echo $this->db->last_query();
         return $result;
     }
-
-    public function insertTask($data) {
-        $data = array(
-            'tache_titre' => $data['titre'],
-            'tache_contenu' => $data['description'],
-        );
-        $result = $this->db->insert('tache', $data);
-        return $result;
-    }
-
-    public function updateTask($data) {
-        $tab = array(
-            'tache_id' => $data['tache_id'],
-            'tache_creation_date' => Conv_Date($data['tache_creation_date'],'FR-EN'),
-            'tache_echeance-date' => Conv_Date($data['tache_echeance-date'],'FR-EN'),
-            'tache_titre' => $data['tache_titre'],
-            'tache_contenu' => $data['tache_contenu'],
-        );
-        $this->db->where('tache_id', $data['tache_id']);
-        $result = $this->db->update('tache', $tab);
-        if($result)
-        {
-            logs("Modification Tache (ID ".$data['tache_id'].")");
-        }
+    public function listTaskArchive() {
+        $this->db->select('tache_id, tache_titre, tache_contenu, tache_creation_date, tache_service_id, tache_intervenant_id, tache_archive');
+        $this->db->from('tache');
+        $this->db->where('tache_archive', 1);
+        $query = $this->db->get();
+        $result = $query->result();
+        //echo $this->db->last_query();
         return $result;
     }
 }

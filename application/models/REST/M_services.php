@@ -11,7 +11,6 @@ class m_services extends CI_Model {
         setlocale(LC_TIME, 'fr', 'fr_FR', 'fr_FR.ISO8859-1');
     }
     public function getServices() {
-        //public function getServicesByIds() {
     
             $this->db->select('*');
             $this->db->from('service');

@@ -33,6 +33,15 @@ class m_intervenants extends CI_Model {
         $result = $query->result_array();
         return $result;
     }
+    public function getIntervenantsByName($name) 
+    {
+        $this->db->select('personnel_id');
+        $this->db->from('personnel');
+        $this->db->where('personnel_nom', $name);
+        $query = $this->db->get();
+        $result = $query->row();
+        return $result;
+    }
     /**
      * Information de l'intervenant avec selection des champs
      * 

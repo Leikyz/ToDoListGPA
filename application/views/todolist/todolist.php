@@ -3,8 +3,7 @@
     <br><br>
 
     <div class="col-md-2 col-md-offset-5 col-centered background-color #00C0EF">
-        <button type="button" class="btn btn-primary btn-lg btn-block">Créer To-Do List</button>
-        <button type="button" class="btn btn-default btn-lg btn-block">Modifier To-Do List</button>
+        <a href="http://localhost/codeigniter/index.php/todolist/C_todolist/insertTask/" class="btn btn-info" role="button">Créer une tâche</a>
     </div>
     
 
@@ -17,6 +16,7 @@
                 <th>Date Création</th>
                 <th>Service ID</th>
                 <th>Intervenant ID</th> 
+                <th>Archive</th>
             </tr>
         </thead>
         <tbody>
@@ -31,9 +31,10 @@ foreach($task as $ligne)
                 <td><?php echo $ligne['titre'];?></td>
                 <td><?php echo $ligne['contenu'];?></td>
                 <td><?php echo Conv_Date($ligne['dateCreation'],'EN-FR');?></td>
-                <td><?php echo $ligne['intervenant'];?></td>
+                <td><?php echo $ligne['intervenant_nom'];?></td>
                 <td><?php echo $ligne['service'];?></td>
                 <td><a href="http://localhost/codeigniter/index.php/todolist/C_todolist/updateTask/<?=$ligne['id']?>" class="btn btn-info" role="button">Modifier</a></td>
+                <td><a href="http://localhost/codeigniter/index.php/todolist/C_todolist/putArchiveTask/<?php echo $ligne['id'];?>/1"><button type="button" class="btn">Archiver</button></a></td>
             </tr>
         </tbody>
 <?php
