@@ -30,7 +30,14 @@ class m_services extends CI_Model {
         return $result;
        
     }
-
+    public function listServices() 
+    {
+        $this->db->select('service_id,service_nom');
+        $this->db->from('service');
+        $query = $this->db->get();
+        $result = $query->result_array();
+        return $result;
+    }
     //public function getUserServicesByType($type) {
     public function getServicesByType($type) {
 

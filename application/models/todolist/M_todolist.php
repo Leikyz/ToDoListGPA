@@ -19,91 +19,97 @@ class m_todolist extends CI_Model {
         $result = $query->row();
         return $result;
     }
-
+    public function getTaskStatus() {
+        $this->db->select('*');
+        $this->db->from('tache_status');
+        $query = $this->db->get();
+        $result = $query->result_array();
+        return $result;
+    }
+    public function getActualTaskStatus() {
+        $this->db->select('tache_status');
+        $this->db->from('tache');
+        $this->db->join('tache_status', 'status_id = tache_status_id');
+        $query = $this->db->get();
+        $result = $query->result_array();
+        return $result;
+    }
+    public function getIntervenantsNomById($id) 
+    {
+        $this->db->select('personnel_nom');
+        $this->db->from('personnel');
+        $this->db->join('tache', 'tache.tache_id = personnel.personnel_id');
+        $this->db->where('personnel_id', $id);
+        $query = $this->db->get();
+        $result = $query->result_array();
+        return $result;
+    }
     public function insertTask($data, $intervenant) {
-        $datetime = date('d-m-y h:i:s');
-        $timestamp = date('Y-m-d H:i:s',strtotime($datetime));
+        $datetime = date('Y-m-d H:i:s');
         $data = array(
-            'tache_titre' => $data['titre'],
-            'tache_contenu' => $data['description'],
+            'tache_titre' => $data['tache_titre'],
+            'tache_contenu' => $data['tache_description'],
             'tache_creation_intervenant_id' => 1,
             'tache_service_id' => $data['service'],
             'tache_echeance_date' => date('Y-m-d', strtotime(str_replace('-', '/', $data['last']))),
-            'tache_creation_date' => preg_replace('#(\d{2})/(\d{2})/(\d{4})\s(.*)#', '$3-$2-$1 $4',  $timestamp),
+            'tache_creation_date' => $datetime,
             'tache_intervenant_id' => $intervenant,
+            'tache_status' => 1
         );
         $result = $this->db->insert('tache', $data);
-        redirect('/todolist/C_todolist');
         return $result;
     }
    // Mettre en archive
-   public function putArchiveTask($id, $archive){
-    $tab = array('tache_archive' => $archive);
-
-
-    $this->db->where('tache_id', $id);
-    $result = $this->db->update('tache', $tab);
-
-    return $result;
-}
-
-// Retirer archive
-public function outArchiveTask($id, $archive){
-    $tab = array('tache_archive' => $archive);
-
-
-    $this->db->where('tache_id', $id);
-    $result = $this->db->update('tache', $tab);
-
-    return $result;
-}
 
     public function updateTask($data, $taskid) 
-    {
-        $datetime = date('d-m-y h:i:s');
-        $timestamp = date('Y-m-d H:i:s',strtotime($datetime));
-        $datas = [];
-        if ($data['titre'] != null) 
-        {
-            $datas += array('tache_titre' => $data['titre']);
-        }
-        if ($data['description'] != null) 
-        {
-            $datas += array('tache_contenu' => $data['description']);
-        }
-        if ($data['service'] != null) 
-        {
-            $datas += array('tache_service_id' => $data['service']);
-        } 
-        if ($data['intervenant'] != null) 
-        {
-            $datas += array('tache_intervenant_id' => $data['intervenant']);
-        }   
-        if ($data['note'] != null) 
-        {
-            $datas += array('tache_commentaire' => $data['note']);
-        }            
-                
+    {  
+        $tab = array(
+            'tache_titre' => $data['tache_titre'],
+            'tache_contenu' => $data['tache_contenu'],
+            'tache_intervenant_id' => $data['tache_intervenant_id'],
+            'tache_service_id' => $data['tache_service_id'],
+            'tache_status_id' => $data['tache_status_id'],
+            'tache_commentaire' => $data['tache_commentaire'],
+        );
         $this->db->where('tache_id', $taskid);
-        $result = $this->db->update('tache', $datas);
+        $result = $this->db->update('tache', $tab);
         redirect('/todolist/C_todolist');
         return $result;
-    }   
+    }
+    
     public function listTask() {
-        $this->db->select('tache_id, tache_titre, tache_contenu, tache_creation_date, tache_service_id, tache_intervenant_id, tache_archive');
+        $this->db->select('tache_id, tache_titre, tache_contenu, tache_creation_date, personnel_prenom, tache_service_id, personnel_nom, service_nom, tache_echeance_date, status_nom, tache_commentaire');
         $this->db->from('tache');
-        $this->db->where('tache_archive', 0);
+        $this->db->join('personnel', 'personnel_id = tache_intervenant_id');
+        $this->db->join('tache_status', 'status_id = tache_status_id');
+        $this->db->join('service', 'service_id = tache_service_id');
+         $this->db->where('tache_status_id <> 4');
         $query = $this->db->get();
         $result = $query->result();
         //echo $this->db->last_query();
         return $result;
     }
     public function listTaskArchive() {
-        $this->db->select('tache_id, tache_titre, tache_contenu, tache_creation_date, tache_service_id, tache_intervenant_id, tache_archive');
+        $this->db->select('tache_id, tache_titre, tache_contenu, tache_creation_date, personnel_prenom, tache_service_id, personnel_nom, service_nom, tache_echeance_date, status_nom, tache_commentaire');
         $this->db->from('tache');
-        $this->db->where('tache_archive', 1);
+        $this->db->join('personnel', 'personnel_id = tache_intervenant_id');
+        $this->db->join('tache_status', 'status_id = tache_status_id');
+        $this->db->join('service', 'service_id = tache_service_id');
+         $this->db->where('tache_status_id', 4);
         $query = $this->db->get();
         $result = $query->result();
+        //echo $this->db->last_query();
+        return $result;
+    }
+    public function getTaskInfos($id) {
+        $this->db->select('tache_id, tache_titre,tache_intervenant_id, tache_contenu, personnel_prenom, tache_service_id, personnel_nom, service_nom, tache_echeance_date, status_nom, tache_commentaire');
+        $this->db->from('tache');
+        $this->db->join('personnel', 'personnel_id = tache_intervenant_id');
+        $this->db->join('tache_status', 'status_id = tache_status_id');
+        $this->db->join('service', 'service_id = tache_service_id');
+        $this->db->where('tache_id', $id);
+        $query = $this->db->get();
+        $result = $query->row();
         //echo $this->db->last_query();
         return $result;
     }

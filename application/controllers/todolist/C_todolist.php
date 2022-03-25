@@ -32,10 +32,10 @@ public function index() {
         $listTaches[$tache->tache_id]['titre'] = $tache->tache_titre;
         $listTaches[$tache->tache_id]['contenu'] = $tache->tache_contenu;
         $listTaches[$tache->tache_id]['dateCreation'] = $tache->tache_creation_date;
-        $listTaches[$tache->tache_id]['intervenant'] = $tache->tache_intervenant_id; 
-        $listTaches[$tache->tache_id]['intervenant_nom'] = $tache->tache_intervenant_id; 
-        $listTaches[$tache->tache_id]['service'] = $tache->tache_service_id;
-        $listTaches[$tache->tache_id]['archive'] = $tache->tache_archive;
+        $listTaches[$tache->tache_id]['intervenant_nom'] = $tache->personnel_nom. ' ' . $tache->personnel_prenom; 
+        $listTaches[$tache->tache_id]['service'] = $tache->service_nom;
+        $listTaches[$tache->tache_id]['note'] = $tache->tache_commentaire;
+        $listTaches[$tache->tache_id]['status'] = $tache->status_nom;
     }
 
     //DATA VIEW
@@ -72,10 +72,12 @@ public function index2() {
         $listTaches[$tache->tache_id]['titre'] = $tache->tache_titre;
         $listTaches[$tache->tache_id]['contenu'] = $tache->tache_contenu;
         $listTaches[$tache->tache_id]['dateCreation'] = $tache->tache_creation_date;
-        $listTaches[$tache->tache_id]['intervenant'] = $tache->tache_service_id; 
-        $listTaches[$tache->tache_id]['service'] = $tache->tache_service_id;
-        $listTaches[$tache->tache_id]['archive'] = $tache->tache_archive;
+        $listTaches[$tache->tache_id]['intervenant_nom'] = $tache->personnel_nom. ' ' . $tache->personnel_prenom; 
+        $listTaches[$tache->tache_id]['service'] = $tache->service_nom;
+        $listTaches[$tache->tache_id]['note'] = $tache->tache_commentaire;
+        $listTaches[$tache->tache_id]['status'] = $tache->status_nom;
     }
+
 
     //DATA VIEW
     $data['task'] = $listTaches;
@@ -101,24 +103,43 @@ public function index2() {
 }
     public function insertTask() {
 
+        $this->load->model('todolist/m_todolist');
         $this->load->model('REST/m_services');
         $this->load->model('REST/m_intervenants');
         $this->load->helper('form');
-        $nbIntervenants = $this->input->post('intervenant[]');
-      
+
         if($this->input->post(NULL, TRUE))
         {
+            $nbIntervenants = $this->input->post('intervenant');
             foreach ($nbIntervenants as $intervenants)
             {
-                $this->load->model('todolist/m_todolist');
                 $addTask = $this->m_todolist->insertTask($this->input->post(NULL, TRUE), $intervenants);
             }
+            redirect('/todolist/C_todolist');
         }
 
         $data['scripts'] = array('jquery3', 'bootstrap', 'lte', 'datepicker','datatables', 'select2');
+
+        $data['custom_script'] = "
+                <script>
+                    $(document).ready(function() {
+                        $('.select2').select2();
+                    });
+                </script>";
         // Creation du bandeau 
-        $data['service'] = $this->m_services->getServices();
-        $data['intervenants'] = $this->m_intervenants->getIntervenants();
+        $intervenants = $this->m_intervenants->listIntervenants();
+        $services = $this->m_services->listServices();
+        foreach($intervenants as $intervenant)
+        {
+            $intervenantInfos[$intervenant['personnel_id']] = $intervenant['personnel_prenom'].' '.$intervenant['personnel_nom'];
+        }
+        foreach($services as $service)
+        {
+            $servicesInfo[$service['service_id']] = $service['service_nom'];
+        }
+       // var_dump($intervenants);
+        $data['service'] = $servicesInfo;
+        $data['list_intervenant'] = $intervenantInfos;
         $data['title'] = 'Ajout';
         $data['titre'] = array('Ajout',"fa fa-book");
         $data['boutons'] = array(
@@ -147,13 +168,28 @@ public function index2() {
             $addTask = $this->m_todolist->updateTask($this->input->post(NULL, TRUE), $taskId);
         }
 
-        $listTask = $this->m_todolist->getTask($taskId);
+        //print_r($listTask);
+        $intervenants = $this->m_intervenants->listIntervenants();
+        $services = $this->m_services->listServices();
+        $status = $this->m_todolist->getTaskStatus();
+        foreach($status as $statu)
+        {
+            $statusInfos[$statu['status_id']] = $statu['status_nom'];
+        }
+        foreach($intervenants as $intervenant)
+        {
+            $intervenantInfos[$intervenant['personnel_id']] = $intervenant['personnel_prenom'].' '.$intervenant['personnel_nom'];
+        }
+        foreach($services as $service)
+        {
+            $servicesInfo[$service['service_id']] = $service['service_nom'];
+        }
 
         $data['scripts'] = array('jquery3', 'bootstrap', 'lte', 'datepicker','datatables');
-        // Creation du bandeau 
-        $data['service'] = $this->m_services->getServices();
-        $data['intervenants'] = $this->m_intervenants->getIntervenants();
-        $data['task'] = $this->m_todolist->getTask($taskId);
+        $data['service'] = $servicesInfo;
+        $data['status'] = $statusInfos;
+        $data['list_intervenant'] = $intervenantInfos;
+        $data['task'] = $this->m_todolist->getTaskInfos($taskId);
         $data['title'] = 'Ajout';
         $data['titre'] = array('Ajout',"fa fa-book");
         $data['boutons'] = array(

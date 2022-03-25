@@ -25,10 +25,27 @@ class m_intervenants extends CI_Model {
         $result = $query->row();
         return $result;
     }
-    public function getIntervenants() 
+    public function listIntervenants() 
     {
-        $this->db->select('*');
+        $this->db->select('personnel_id,personnel_prenom,personnel_nom');
         $this->db->from('personnel');
+        $query = $this->db->get();
+        $result = $query->result_array();
+        return $result;
+    }
+    public function getIntervenantsPrenom() 
+    {
+        $this->db->select('personnel_prenom');
+        $this->db->from('personnel');
+        $query = $this->db->get();
+        $result = $query->result_array();
+        return $result;
+    }
+    public function getIntervenantsNomById($id) 
+    {
+        $this->db->select('personnel_nom');
+        $this->db->from('personnel');
+        $this->db->where('personnel_id', $id);
         $query = $this->db->get();
         $result = $query->result_array();
         return $result;

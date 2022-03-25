@@ -1,42 +1,44 @@
-<div class="col-md-6 col-md-offset-3 col-centered">
-    <form action="" method="post">
+
+<?php
+echo form_open('');
+    ?>
     <div class="form-group">
-      <label for="exampleFormControlInput1">Nom de la tâche</label>
-      <input type="text" name="titre" class="form-control" id="exampleFormControlInput1" required>
+    <?php
+    echo form_label('Nom de la tâche', 'tache_nom_label');
+    echo form_input('tache_titre', '',  'class="form-control"');
+    ?>
     </div>
+
     <div class="form-group">
-      <label for="exampleFormControlInput1">Description de la tâche</label>
-      <input type="text" name="description" class="form-control" id="exampleFormControlInput1" required>
-    </div>
-    <div class="form-group">
-      <label for="exampleFormControlSelect2">Choix des services</label>
-      <select  class="form-control" name="service" id="exampleFormControlSelect2" required>
-          <?php  foreach($service as $ligne) : ?>
-              <option value="<?= $ligne['service_id']?>"><?= $ligne['service_nom']?></option>
-          <?php endforeach ?>
-      </select>
-    </div>
-    <div class="form-group">
-      <label for="exampleFormControlSelects2">Choix du personnel concerner</label>
-      <select multiple class="form-control" name="intervenant[]" id="exampleFormControlSelects2" required>
-          <?php  foreach($intervenants as $perso) : ?>
-              <option  value="<?= $perso['personnel_id']?>"><?= $perso['personnel_nom']?> <?= $perso['personnel_prenom']?></option>
-          <?php endforeach ?>
-      </select>
+    <?php
+    echo form_label('Description de la tâche', 'tache_description_label');
+    echo form_input('tache_description', '',  'class="form-control"');
+    ?>
     </div>
     <div class="form-group">
-    <label for="datefin">Date d'échéance</label>
-      <input type="date" id="datefin" name="datefin">
+    <?php
+    echo form_label('Listes des intervenants', 'tache_intervenant_label');
+    echo form_multiselect('intervenant[]',  $list_intervenant, "", 'class="form-control select2"');
+    ?>
     </div>
-    <div class="col-md-2 col-md-offset-5 col-centered background-color #00C0EF">
-        <button type="submit" class="btn btn-primary btn-lg btn-block">Enregistrer</button>
+    <div class="form-group">
+    <?php
+    echo form_label('Listes des services', 'tache_services_id');
+    echo form_dropdown('service',  $service, "", 'class="form-control select2"');
+    ?>
     </div>
-  </form>
-  <?php
-  ?>
-</div>
+    <div class="form-group">
+    <?php
+    echo form_label('Date échéance', 'tache_date_echeance_label');
+    echo form_input('tache_date_echeance', '',  'class="form-control datepicker"');
+    ?>
+    </div>
+    <?php
+    echo form_submit('envoi', 'Envoyer', 'class="btn btn-primary"');
+    echo form_close();
+    ?>
 <script>
 $(document).ready(function(){
-	$('#datefin').select2()
+	$('.search').select2()
 });
 </script>
